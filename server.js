@@ -5,6 +5,8 @@ const Slapp = require('slapp')
 const ConvoStore = require('slapp-convo-beepboop')
 const Context = require('slapp-context-beepboop')
 
+const app = express()
+
 // use `PORT` env var on Beep Boop - default to 3000 locally
 var port = process.env.PORT || 3000
 
@@ -113,8 +115,12 @@ slapp.message('.*', ['direct_mention', 'direct_message'], (msg) => {
   }
 })
 
+app.get('/hello', (req, res) => {
+  res.send('Hello world.')
+})
+
 // attach Slapp to express server
-var server = slapp.attachToExpress(express())
+var server = slapp.attachToExpress(app())
 
 // start http server
 server.listen(port, (err) => {
