@@ -125,6 +125,8 @@ app.get('/', (req, res) => {
 
 // start http server
 app.listen(port, (err) => {
+  console.log('App started')
+
   if (err) {
     return console.error(err)
   }
