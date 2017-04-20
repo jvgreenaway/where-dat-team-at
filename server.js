@@ -113,8 +113,10 @@ I will respond to the following messages:
 //   }
 // })
 
+const locations = {}
 
 slapp.command('/location', '(.*)', (msg, text, location) => {
+  locations[msg.body.user_id] = location
   msg.respond(`Your location has been set as _${location}_`)
 })
 
@@ -127,6 +129,11 @@ const app = slapp.attachToExpress(express())
 app.get('/', (req, res) => {
   res.send('Hello world.')
 })
+
+app.get('/locations', (req, res) => {
+  res.send(locations)
+})
+
 
 
 // start http server
