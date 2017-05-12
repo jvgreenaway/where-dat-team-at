@@ -8,32 +8,19 @@ const slack = require('slack')
 const port = process.env.PORT || 3000
 const token = process.env.SLACK_TOKEN
 
-const memberNames = {
-  U1CTUKMT9: 'Zoé',
-  U40MZ9EL9: 'Tugba',
-  U0BU8V7N0: 'Trev',
-  U2NC0H2BS: 'Temi',
-  U0BUEB5BK: 'Paolo',
-  U0BU8SV4K: 'Michele',
-  U1KU01R4K: 'Kristina',
-  U162CB0LC: 'James',
-  U0C160N8N: 'Christean',
-  U0BUPA30R: 'Chris',
-  U1CU5P4H0: 'Anna',
+const team = {
+  U1CTUKMT9: {}, // Zoé
+  // U40MZ9EL9: {}, // Tugba
+  U0BU8V7N0: {}, // Trev
+  // U2NC0H2BS: {}, // Temi
+  U0BUEB5BK: {}, // Paolo
+  U0BU8SV4K: {}, // Michele
+  U1KU01R4K: {}, // Kristina
+  U162CB0LC: {}, // James
+  U0C160N8N: {}, // Christean
+  U0BUPA30R: {}, // Chris
+  U1CU5P4H0: {}, // Anna
 }
-
-const members = Object.keys(memberNames)
-
-
-
-slack.users.list({ token }, (err, data) => {
-  if (err) throw new Error(err)
-  console.log('users')
-  console.log(data)
-})
-
-
-
 
 
 const slapp = Slapp({
@@ -43,7 +30,19 @@ const slapp = Slapp({
 })
 
 
-const locations = {}
+// fetch users and store as team members
+
+slack.users.list({ token }, (err, data) => {
+  if (err) throw new Error(err)
+
+  data.members.forEach((member) => {
+    if (!members[member.id]) return
+    team[member.id] = member
+  })
+})
+
+
+// commands
 
 slapp.command('/location', '(.*)', (msg, text, location) => {
   locations[msg.body.user_id] = location
@@ -51,17 +50,18 @@ slapp.command('/location', '(.*)', (msg, text, location) => {
 })
 
 
-// construct server
+// public api
 
 const app = slapp.attachToExpress(express())
 
 app.use(cors())
 
-
-// public api
-
 app.get('/', (req, res) => {
   res.send('Hello world.')
+})
+
+app.get('/team', (req, res) => {
+  res.send(team)
 })
 
 app.get('/locations', (req, res) => {
