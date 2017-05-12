@@ -3,6 +3,7 @@ const cors = require('cors')
 const Slapp = require('slapp')
 const ConvoStore = require('slapp-convo-beepboop')
 const Context = require('slapp-context-beepboop')
+const slack = require('slack')
 
 const port = process.env.PORT || 3000
 const token = process.env.SLACK_TOKEN
@@ -22,6 +23,7 @@ const memberNames = {
 }
 
 const members = Object.keys(memberNames)
+
 
 
 slack.users.list({ token }, (err, data) => {
