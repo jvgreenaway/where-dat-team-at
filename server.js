@@ -8,7 +8,7 @@ const slack = require('slack')
 const port = process.env.PORT || 3000
 const token = process.env.SLACK_TOKEN
 
-const team = {
+const ohsTeam = {
   U1CTUKMT9: {}, // Zoé
   // U40MZ9EL9: {}, // Tugba
   U0BU8V7N0: {}, // Trev
@@ -22,6 +22,12 @@ const team = {
   U1CU5P4H0: {}, // Anna
 }
 
+const orbitTeam = {
+  U2L4F0AF3: {}, // James
+}
+
+const team = orbitTeam
+
 const slapp = Slapp({
   verify_token: process.env.SLACK_VERIFY_TOKEN,
   convo_store: ConvoStore(),
@@ -31,12 +37,13 @@ const slapp = Slapp({
 
 // fetch users and store as team members
 
-slack.users.list({ token }, (err, data) => {
+slack.users.list({ token }, (err, { members }) => {
   if (err) throw new Error(err)
 
-  console.log(`Fetched ${data.members.length} users`)
+  console.log(`Fetched ${members.length} users`)
+  console.log(members.map(({ id }) => id).join(', '))
 
-  data.members.forEach((member) => {
+  members.forEach((member) => {
     if (!team[member.id]) return
     team[member.id] = member
   })
