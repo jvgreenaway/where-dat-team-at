@@ -22,7 +22,6 @@ const team = {
   U1CU5P4H0: {}, // Anna
 }
 
-
 const slapp = Slapp({
   verify_token: process.env.SLACK_VERIFY_TOKEN,
   convo_store: ConvoStore(),
@@ -45,7 +44,8 @@ slack.users.list({ token }, (err, data) => {
 // commands
 
 slapp.command('/location', '(.*)', (msg, text, location) => {
-  locations[msg.body.user_id] = location
+  if (!team[msg.body.user_id]) return
+  team[msg.body.user_id].location = location
   msg.respond(`Your location has been set as _${location}_`)
 })
 
@@ -62,10 +62,6 @@ app.get('/', (req, res) => {
 
 app.get('/team', (req, res) => {
   res.send(team)
-})
-
-app.get('/locations', (req, res) => {
-  res.send(locations)
 })
 
 
