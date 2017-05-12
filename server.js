@@ -36,7 +36,7 @@ slack.users.list({ token }, (err, data) => {
   if (err) throw new Error(err)
 
   data.members.forEach((member) => {
-    if (!members[member.id]) return
+    if (!team[member.id]) return
     team[member.id] = member
   })
 })
