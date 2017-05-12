@@ -1,6 +1,5 @@
-'use strict'
-
 const express = require('express')
+const cors = require('cors')
 const Slapp = require('slapp')
 const ConvoStore = require('slapp-convo-beepboop')
 const Context = require('slapp-context-beepboop')
@@ -25,6 +24,8 @@ slapp.command('/location', '(.*)', (msg, text, location) => {
 // construct server
 
 const app = slapp.attachToExpress(express())
+
+app.use(cors())
 
 
 // public api
