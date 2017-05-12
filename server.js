@@ -37,7 +37,7 @@ const slapp = Slapp({
 
 // fetch users and store as team members
 
-slack.users.list({ token }, (err, { members }) => {
+const updateMembers = slack.users.list({ token }, (err, { members }) => {
   if (err) throw new Error(err)
 
   console.log(`Fetched ${members.length} users`)
@@ -48,6 +48,10 @@ slack.users.list({ token }, (err, { members }) => {
     team[member.id] = member
   })
 })
+
+updateMembers()
+
+setInterval(updateMembers, 10000)
 
 
 // commands
