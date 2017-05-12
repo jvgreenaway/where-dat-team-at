@@ -34,7 +34,7 @@ const slapp = Slapp({
 slack.users.list({ token }, (err, data) => {
   if (err) throw new Error(err)
 
-  console.log(`Fetched ${data.members.lenth} users`)
+  console.log(`Fetched ${data.members.length} users`)
 
   data.members.forEach((member) => {
     if (!team[member.id]) return
