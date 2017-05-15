@@ -38,11 +38,11 @@ const slapp = Slapp({
 // fetch users and store as team members
 
 const updateMembers = () => new Promise((resolve) => {
-  slack.users.list({ token }, (err, { members }) => {
+  slack.users.list({ token }, (err, data) => {
     if (err) return resolve(err.message)
 
-    console.log(`Fetched ${members.length} users`)
-    console.log(members.map(({ id }) => id).join(', '))
+    const { members } = data
+    console.log(`Fetched ${members.length} users from Slack`)
 
     members.forEach((member) => {
       if (!team[member.id]) return
