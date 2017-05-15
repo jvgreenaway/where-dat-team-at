@@ -47,7 +47,7 @@ const updateMembers = () => new Promise((resolve) => {
     members.forEach((member) => {
       const cachedMember = team[member.id]
       if (!cachedMember) return
-      cachedMember = Object.assign(cachedMember, member)
+      cachedMember = Object.assign({}, cachedMember, member)
     })
 
     return resolve('Latest data')
