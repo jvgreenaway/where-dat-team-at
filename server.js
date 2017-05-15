@@ -26,7 +26,7 @@ const orbitTeam = {
   U2L4F0AF3: {}, // James
 }
 
-const team = orbitTeam
+const team = ohsTeam
 
 const slapp = Slapp({
   verify_token: process.env.SLACK_VERIFY_TOKEN,
@@ -57,8 +57,11 @@ setInterval(updateMembers, 10000)
 // commands
 
 slapp.command('/location', '(.*)', (msg, text, location) => {
-  if (!team[msg.body.user_id]) return
+  if (!team[msg.body.user_id]) 
+    return msg.respond(`You are not added as a team member`)
+  
   team[msg.body.user_id].location = location
+  
   msg.respond(`Your location has been set as _${location}_`)
 })
 
