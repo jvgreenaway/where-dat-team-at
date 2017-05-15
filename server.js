@@ -62,16 +62,14 @@ const updateTeamCache = (members) => new Promise((resolve) => {
 })
 
 
-const updateTeamCache = () => new Promise((resolve) => {
+const fetchTeam = () => new Promise((resolve) => {
   slack.users.list({ token }, (err, data) => {
     if (err) throw err
-
+    
     const { members } = data
     console.log(`Fetched ${members.length} users from Slack`)
-
-    updateTeamCache(members)
-      .then(saveTeamCache)
-      .then(resolve)
+    
+    resolve(members)
   })
 })
 
@@ -99,7 +97,8 @@ app.get('/', (req, res) => {
 })
 
 app.get('/team', (req, res) => {
-  updateTeamCache()
+  fetchTeam()
+    .then(updateTeamCache)
     .then((team) => res.send({ team }))
     .catch((message) => res.send({ message, team })))
 })
