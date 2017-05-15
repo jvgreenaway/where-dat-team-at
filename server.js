@@ -39,7 +39,11 @@ const slapp = Slapp({
 // fetch users and store as team members
 
 const loadTeamCache = () => new Promise((resolve) => {
+  console.log('loadTeamCache')
+
   kv.get('team', (err, storedTeam) => {
+    console.log('loadTeamCache done', storedTeam)
+
     if (err) throw err
     team = storedTeam
     resolve(storedTeam)
@@ -47,6 +51,8 @@ const loadTeamCache = () => new Promise((resolve) => {
 })
 
 const saveTeamCache = (team = team) => new Promise((resolve) => {
+  console.log('saveTeamCache', team)
+  
   kv.set('team', team, (err) => {
     if (err) throw err
     resolve(team)
@@ -63,6 +69,8 @@ const updateTeamCache = (members) => new Promise((resolve) => {
 
 
 const fetchTeam = () => new Promise((resolve) => {
+  console.log('fetchTeam')
+
   slack.users.list({ token }, (err, data) => {
     if (err) throw err
     
@@ -104,7 +112,9 @@ app.get('/team', (req, res) => {
 })
 
 app.get('/reset', (req, res) => {
-  saveTeamCache({})
+  team = ohsTeam
+
+  saveTeamCache(team)
     .then(res.send)
 })
 
