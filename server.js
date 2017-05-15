@@ -105,6 +105,7 @@ app.get('/', (req, res) => {
 app.get('/team', (req, res) => {
   fetchTeam()
     .then(updateTeamCache)
+    .then(saveTeamCache)
     .then((team) => res.send({ team }))
     .catch((message) => res.send({ message, team }))
 })
