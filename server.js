@@ -6,7 +6,7 @@ const Context = require('slapp-context-beepboop')
 const kv = require('beepboop-persist')()
 const slack = require('slack')
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3100
 const token = process.env.SLACK_TOKEN
 
 const ohsTeam = {
@@ -39,8 +39,6 @@ const slapp = Slapp({
 // fetch users and store as team members
 
 const loadTeamCache = () => new Promise((resolve) => {
-  console.log('loadTeamCache')
-
   kv.get('team', (err, storedTeam) => {
     console.log('loadTeamCache done', storedTeam)
 
@@ -51,9 +49,9 @@ const loadTeamCache = () => new Promise((resolve) => {
 })
 
 const saveTeamCache = (team = team) => new Promise((resolve) => {
-  console.log('saveTeamCache', team)
-  
   kv.set('team', team, (err) => {
+    console.log('set team')
+    console.log(err)
     if (err) throw err
     resolve(team)
   })
@@ -76,7 +74,7 @@ const fetchTeam = () => new Promise((resolve) => {
     
     const { members } = data
     console.log(`Fetched ${members.length} users from Slack`)
-    
+
     resolve(members)
   })
 })
@@ -87,9 +85,9 @@ const fetchTeam = () => new Promise((resolve) => {
 slapp.command('/location', '(.*)', (msg, text, location) => {
   if (!team[msg.body.user_id]) 
     return msg.respond(`You are not added as a team member`)
-  
+
   team[msg.body.user_id].location = location
-  
+
   msg.respond(`Your location has been set as _${location}_`)
 })
 
@@ -115,7 +113,7 @@ app.get('/reset', (req, res) => {
   team = ohsTeam
 
   saveTeamCache(team)
-    .then(res.send)
+    .then(() => res.send())
 })
 
 
