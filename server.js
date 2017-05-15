@@ -45,7 +45,7 @@ const updateMembers = () => slack.users.list({ token }, (err, { members }) => {
 
   members.forEach((member) => {
     if (!team[member.id]) return
-    team[member.id] = member
+    team[member.id] = Object.assign(team[member.id], member)
   })
 })
 
