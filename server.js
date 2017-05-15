@@ -100,7 +100,7 @@ app.get('/team', (req, res) => {
   fetchTeam()
     .then(updateTeamCache)
     .then((team) => res.send({ team }))
-    .catch((message) => res.send({ message, team })))
+    .catch((message) => res.send({ message, team }))
 })
 
 app.get('/reset', (req, res) => {
