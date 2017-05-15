@@ -37,21 +37,21 @@ const slapp = Slapp({
 
 // fetch users and store as team members
 
-const updateMembers = () => slack.users.list({ token }, (err, { members } = {}) => {
-  if (err) throw new Error(err)
+const updateMembers = () => new Promise((resolve, reject) => {
+  slack.users.list({ token }, (err, { members } = {}) => {
+    if (err) reject(err)
 
-  console.log(`Fetched ${members.length} users`)
-  console.log(members.map(({ id }) => id).join(', '))
+    console.log(`Fetched ${members.length} users`)
+    console.log(members.map(({ id }) => id).join(', '))
 
-  members.forEach((member) => {
-    if (!team[member.id]) return
-    team[member.id] = Object.assign(team[member.id], member)
+    members.forEach((member) => {
+      if (!team[member.id]) return
+      team[member.id] = Object.assign(team[member.id], member)
+    })
+
+    resolve()
   })
 })
-
-updateMembers()
-
-setInterval(updateMembers, 10000)
 
 
 // commands
@@ -77,7 +77,14 @@ app.get('/', (req, res) => {
 })
 
 app.get('/team', (req, res) => {
-  res.send(team)
+  updateMembers().then(
+    () => res.send(members), 
+    (err) => {
+      console.log('Error updating members')
+      console.error(err)
+      res.send(members)
+    }
+  )
 })
 
 
