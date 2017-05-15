@@ -3,6 +3,7 @@ const cors = require('cors')
 const Slapp = require('slapp')
 const ConvoStore = require('slapp-convo-beepboop')
 const Context = require('slapp-context-beepboop')
+const kv = require('beepboop-persist')()
 const slack = require('slack')
 
 const port = process.env.PORT || 3000
@@ -26,7 +27,7 @@ const orbitTeam = {
   U2L4F0AF3: {}, // James
 }
 
-const team = ohsTeam
+let team = ohsTeam
 
 const slapp = Slapp({
   verify_token: process.env.SLACK_VERIFY_TOKEN,
@@ -37,19 +38,40 @@ const slapp = Slapp({
 
 // fetch users and store as team members
 
-const updateMembers = () => new Promise((resolve) => {
+const loadTeamCache = () => new Promise((resolve) => {
+  kv.get('team', (err, storedTeam) => {
+    if (err) throw err
+    team = storedTeam
+    resolve(storedTeam)
+  })
+})
+
+const saveTeamCache = (team = team) => new Promise((resolve) => {
+  kv.set('team', team, (err) => {
+    if (err) throw err
+    resolve(team)
+  })
+})
+
+const updateTeamCache = (members) => new Promise((resolve) => {
+  members.forEach((member) => {
+    if (!team[member.id]) return
+    team[member.id] = Object.assign({}, team[member.id], member)
+  })
+  resolve(team)
+})
+
+
+const updateTeamCache = () => new Promise((resolve) => {
   slack.users.list({ token }, (err, data) => {
-    if (err) return resolve(err.message)
+    if (err) throw err
 
     const { members } = data
     console.log(`Fetched ${members.length} users from Slack`)
 
-    members.forEach((member) => {
-      if (!team[member.id]) return
-      team[member.id] = Object.assign({}, team[member.id], member)
-    })
-
-    return resolve('Latest data')
+    updateTeamCache(members)
+      .then(saveTeamCache)
+      .then(resolve)
   })
 })
 
@@ -77,19 +99,23 @@ app.get('/', (req, res) => {
 })
 
 app.get('/team', (req, res) => {
-  updateMembers().then(
-    (message) => {
-      console.log('Error updating team members')
-      console.error(message)
-      res.send({ message, team })
-    }
-  )
+  updateTeamCache()
+    .then((team) => res.send({ team }))
+    .catch((message) => res.send({ message, team })))
+})
+
+app.get('/reset', (req, res) => {
+  saveTeamCache({})
+    .then(res.send)
 })
 
 
-// start server
 
-app.listen(port, (err) => {
-  if (err) return console.error(err)
-  console.log(`Listening on port ${port}`)
-})
+// load data and start server
+loadTeamCache()
+  .then(() => {
+    app.listen(port, (err) => {
+      if (err) return console.error(err)
+      console.log(`Listening on port ${port}`)
+    })
+  })
