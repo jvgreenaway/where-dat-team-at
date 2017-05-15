@@ -78,11 +78,11 @@ app.get('/', (req, res) => {
 
 app.get('/team', (req, res) => {
   updateMembers().then(
-    () => res.send(members), 
+    () => res.send(team), 
     (err) => {
-      console.log('Error updating members')
+      console.log('Error updating team members')
       console.error(err)
-      res.send(members)
+      res.send(team)
     }
   )
 })
