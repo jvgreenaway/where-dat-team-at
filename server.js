@@ -15,7 +15,7 @@ const ohsTeam = {
   // U2NC0H2BS: {}, // Temi
   U0BUEB5BK: {}, // Paolo
   U0BU8SV4K: {}, // Michele
-  U1KU01R4K: {}, // Kristina
+  // U1KU01R4K: {}, // Kristina
   U162CB0LC: {}, // James
   U0C160N8N: {}, // Christean
   U0BUPA30R: {}, // Chris
