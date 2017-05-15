@@ -37,7 +37,7 @@ const slapp = Slapp({
 
 // fetch users and store as team members
 
-const updateMembers = () => slack.users.list({ token }, (err, { members }) => {
+const updateMembers = () => slack.users.list({ token }, (err, { members } = {}) => {
   if (err) throw new Error(err)
 
   console.log(`Fetched ${members.length} users`)
